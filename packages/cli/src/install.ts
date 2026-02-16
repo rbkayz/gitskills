@@ -24,11 +24,11 @@ function sha256File(p: string): Promise<string> {
   });
 }
 
-const MAX_ARCHIVE_FILES = 1000;
-const MAX_ARCHIVE_TOTAL_BYTES = 50 * 1024 * 1024; // 50 MB uncompressed
-const MAX_ARCHIVE_PATH_LENGTH = 240;
-const MAX_ARCHIVE_PATH_DEPTH = 16;
-const ALLOWED_ENTRY_TYPES = new Set([
+export const MAX_ARCHIVE_FILES = 1000;
+export const MAX_ARCHIVE_TOTAL_BYTES = 50 * 1024 * 1024; // 50 MB uncompressed
+export const MAX_ARCHIVE_PATH_LENGTH = 240;
+export const MAX_ARCHIVE_PATH_DEPTH = 16;
+export const ALLOWED_ENTRY_TYPES = new Set([
   "File",
   "OldFile",
   "Directory",
@@ -36,7 +36,7 @@ const ALLOWED_ENTRY_TYPES = new Set([
   "ContiguousFile"
 ]);
 
-function validateArchivePath(p: string): void {
+export function validateArchivePath(p: string): void {
   const normalized = p.replace(/\\/g, "/");
   if (!normalized || normalized === ".") return;
   if (normalized.startsWith("/")) throw new Error(`unsafe archive entry path: ${p}`);
@@ -46,7 +46,7 @@ function validateArchivePath(p: string): void {
   if (depth > MAX_ARCHIVE_PATH_DEPTH) throw new Error(`archive entry path depth too large: ${p}`);
 }
 
-async function validateTarball(tarPath: string): Promise<void> {
+export async function validateTarball(tarPath: string): Promise<void> {
   let fileCount = 0;
   let totalBytes = 0;
   await tar.t({

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/registry";
 export async function GET(req: Request) {
   const origin = new URL(req.url).origin;
   const rows = await prisma.skill.findMany({
-    where: { trusted: true },
+    where: { trusted: true, status: "active" },
     include: { publisher: { select: { handle: true } } },
     orderBy: [{ trustScore: "desc" }, { downloadTotal: "desc" }, { updatedAt: "desc" }],
     take: 100
@@ -37,4 +37,3 @@ export async function GET(req: Request) {
     headers: { "content-type": "text/markdown; charset=utf-8" }
   });
 }
-

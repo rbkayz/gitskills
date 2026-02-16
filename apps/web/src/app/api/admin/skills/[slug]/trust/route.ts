@@ -1,20 +1,15 @@
 import { NextResponse } from "next/server";
 import type { TrustTier } from "@prisma/client";
 import { prisma } from "@/lib/registry";
+import { requireAdmin } from "@/lib/admin";
 
 type Body = { trusted?: boolean; trustTier?: TrustTier | null };
 
 const ALLOWED_TIERS: TrustTier[] = ["community", "bronze", "silver", "gold"];
 
 export async function PATCH(req: Request, ctx: any) {
-  const expectedToken = process.env.ADMIN_TOKEN;
-  if (!expectedToken) {
-    return NextResponse.json({ error: "admin token is not configured" }, { status: 501 });
-  }
-  const token = req.headers.get("x-admin-token");
-  if (!token || token !== expectedToken) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
+  const auth = requireAdmin(req);
+  if (!auth.ok) return auth.response;
 
   const paramsAny = ctx?.params;
   const params = typeof paramsAny?.then === "function" ? await paramsAny : paramsAny;

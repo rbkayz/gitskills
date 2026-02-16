@@ -10,7 +10,7 @@ function tierLabel(tier: string | null): string {
 
 export default async function TrustedPage() {
   const skills = await prisma.skill.findMany({
-    where: { trusted: true },
+    where: { trusted: true, status: "active" },
     include: { publisher: { select: { handle: true } } },
     orderBy: [{ trustScore: "desc" }, { downloadTotal: "desc" }, { updatedAt: "desc" }],
     take: 200
@@ -47,4 +47,3 @@ export default async function TrustedPage() {
     </main>
   );
 }
-

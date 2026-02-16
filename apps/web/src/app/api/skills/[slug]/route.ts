@@ -5,11 +5,11 @@ export async function GET(req: Request, ctx: { params: { slug: string } } | { pa
   const paramsAny = (ctx as any).params as any;
   const params = typeof paramsAny?.then === "function" ? await paramsAny : paramsAny;
   const slug = params.slug as string;
-  const skill = await prisma.skill.findUnique({
-    where: { slug },
+  const skill = await prisma.skill.findFirst({
+    where: { slug, status: "active" },
     include: {
       publisher: { select: { handle: true, displayName: true } },
-      releases: { orderBy: { createdAt: "desc" } }
+      releases: { where: { status: "active" }, orderBy: { createdAt: "desc" } }
     }
   });
   if (!skill) return NextResponse.json({ error: "not found" }, { status: 404 });
@@ -20,6 +20,7 @@ export async function GET(req: Request, ctx: { params: { slug: string } } | { pa
     slug: skill.slug,
     name: skill.name,
     summary: skill.summary,
+    status: skill.status,
     readmeMd: skill.readmeMd,
     tags: skill.tags,
     categories: skill.categories,
@@ -36,6 +37,7 @@ export async function GET(req: Request, ctx: { params: { slug: string } } | { pa
     updatedAt: skill.updatedAt.toISOString(),
     releases: skill.releases.map((r: any) => ({
       version: r.version,
+      status: r.status,
       downloadUrl: `${origin}/api/skills/${encodeURIComponent(skill.slug)}/${encodeURIComponent(r.version)}/download`,
       sha256: r.sha256,
       sizeBytes: r.sizeBytes,

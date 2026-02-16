@@ -4,10 +4,12 @@ import path from "node:path";
 
 export type CliConfig = {
   registryUrl: string;
+  publishToken: string;
 };
 
 const DEFAULTS: CliConfig = {
-  registryUrl: "http://localhost:3000"
+  registryUrl: "http://localhost:3000",
+  publishToken: ""
 };
 
 function configDir(): string {
@@ -37,4 +39,3 @@ export function saveConfig(cfg: CliConfig): void {
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(configPath(), JSON.stringify(cfg, null, 2) + "\n", "utf8");
 }
-

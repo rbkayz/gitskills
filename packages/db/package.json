@@ -25,6 +25,7 @@
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@gitskills/sdk": "*",
     "@prisma/client": "^6.2.1"
   },
   "devDependencies": {

@@ -5,6 +5,7 @@ export type SkillSummary = {
   slug: string;
   name: string;
   summary: string;
+  status: "active" | "hidden" | "blocked";
   tags: string[];
   categories: string[];
   compatibility: string[];
@@ -19,6 +20,7 @@ export type SkillSummary = {
 
 export type ReleaseInfo = {
   version: string;
+  status: "active" | "hidden" | "blocked";
   downloadUrl: string; // absolute URL
   sha256: string;
   sizeBytes: number;
@@ -35,6 +37,7 @@ export type SkillDetail = SkillSummary & {
 };
 
 export type SearchFilters = {
+  mode?: "keyword" | "hybrid";
   category?: string;
   tag?: string;
   compatibility?: string;

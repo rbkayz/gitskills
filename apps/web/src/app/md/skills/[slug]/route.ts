@@ -6,11 +6,11 @@ export async function GET(req: Request, ctx: any) {
   const params = typeof paramsAny?.then === "function" ? await paramsAny : paramsAny;
   const slug = params.slug as string;
 
-  const skill = await prisma.skill.findUnique({
-    where: { slug },
+  const skill = await prisma.skill.findFirst({
+    where: { slug, status: "active" },
     include: {
       publisher: { select: { handle: true, displayName: true } },
-      releases: { orderBy: { createdAt: "desc" } }
+      releases: { where: { status: "active" }, orderBy: { createdAt: "desc" } }
     }
   });
   if (!skill) return new NextResponse("Not Found\n", { status: 404, headers: { "content-type": "text/plain" } });
@@ -22,6 +22,7 @@ export async function GET(req: Request, ctx: any) {
   lines.push(`# ${skill.name}`);
   lines.push("");
   lines.push(`- slug: \`${skill.slug}\``);
+  lines.push(`- status: ${skill.status}`);
   lines.push(`- summary: ${skill.summary}`);
   lines.push(`- publisher: ${skill.publisher.handle}`);
   lines.push(`- trust: ${skill.trustScore}`);
@@ -42,7 +43,7 @@ export async function GET(req: Request, ctx: any) {
   lines.push("## Versions");
   lines.push("");
   for (const r of skill.releases) {
-    lines.push(`- ${r.version} sha256=${r.sha256} size=${r.sizeBytes}B downloads=${r.downloadTotal}`);
+    lines.push(`- ${r.version} status=${r.status} sha256=${r.sha256} size=${r.sizeBytes}B downloads=${r.downloadTotal}`);
     lines.push(`  - download: ${origin}/api/skills/${encodeURIComponent(skill.slug)}/${encodeURIComponent(r.version)}/download`);
   }
   lines.push("");

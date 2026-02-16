@@ -25,12 +25,13 @@ export async function GET(req: Request) {
   const publisher = u.searchParams.get("publisher") ?? undefined;
   const minTrust = asInt(u.searchParams.get("minTrust"), 0);
   const trusted = asBool(u.searchParams.get("trusted"));
+  const mode = (u.searchParams.get("mode") ?? "keyword").trim().toLowerCase();
   const sort = (u.searchParams.get("sort") ?? "downloads") as "downloads" | "trust" | "recent";
   const page = Math.max(1, asInt(u.searchParams.get("page"), 1));
   const pageSize = Math.min(50, Math.max(1, asInt(u.searchParams.get("pageSize"), 20)));
 
   const tokens = q.split(/\s+/).filter(Boolean).slice(0, 8);
-  const where: any = { trustScore: { gte: minTrust } };
+  const where: any = { status: "active", trustScore: { gte: minTrust } };
   if (category) where.categories = { has: category };
   if (tag) where.tags = { has: tag };
   if (compatibility) where.compatibility = { has: compatibility };
@@ -40,6 +41,7 @@ export async function GET(req: Request) {
     where.OR = [
       { name: { contains: q, mode: "insensitive" } },
       { summary: { contains: q, mode: "insensitive" } },
+      ...(mode === "hybrid" ? [{ readmeMd: { contains: q, mode: "insensitive" } }] : []),
       ...(tokens.length ? [{ tags: { hasSome: tokens } }] : [])
     ];
   }
@@ -68,6 +70,7 @@ export async function GET(req: Request) {
   lines.push(`- total: ${total}`);
   lines.push(`- page: ${page}`);
   lines.push(`- pageSize: ${pageSize}`);
+  lines.push(`- mode: ${mode}`);
   lines.push(`- sort: ${sort}`);
   lines.push(`- trusted: ${trusted == null ? "(any)" : String(trusted)}`);
   lines.push("");
@@ -76,6 +79,7 @@ export async function GET(req: Request) {
     lines.push(`## ${s.slug}`);
     lines.push("");
     lines.push(`- name: ${s.name}`);
+    lines.push(`- status: ${s.status}`);
     lines.push(`- summary: ${s.summary}`);
     lines.push(`- trust: ${s.trustScore}`);
     lines.push(`- trusted: ${s.trusted ? `yes (${s.trustTier ?? "community"})` : "no"}`);

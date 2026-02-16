@@ -11,6 +11,7 @@ This repo builds a skills marketplace with explicit **agent interfaces**:
 - Index: `/.well-known/gitskills/index.md`
 - Search: `/md/search.md?q=<natural language>&category=...&tag=...`
 - Trusted feed: `/md/trusted.md`
+- Trending feed: `/md/trending.md?days=7`
 - Skill card: `/md/skills/<slug>.md`
 - README: `/skills/<slug>/README.md`
 
@@ -22,6 +23,11 @@ Tools:
 - `get_skill(slug)`
 - `get_skill_readme(slug)`
 - `get_install_command(slug, version?)`
+
+Transports:
+
+- `stdio` (default)
+- `streamable-http` via `/mcp` when `MCP_TRANSPORT=http`
 
 ## WebMCP Compatibility
 

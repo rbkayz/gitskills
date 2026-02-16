@@ -52,6 +52,7 @@ export function WebMcpProvider() {
           type: "object",
           properties: {
             query: { type: "string", description: "Search query (keyword or natural language)" },
+            mode: { type: "string", enum: ["keyword", "hybrid"] },
             category: { type: "string" },
             tag: { type: "string" },
             compatibility: { type: "string" },
@@ -68,6 +69,7 @@ export function WebMcpProvider() {
           try {
             const u = new URL("/api/skills", window.location.origin);
             u.searchParams.set("q", String(input?.query ?? ""));
+            if (input?.mode) u.searchParams.set("mode", String(input.mode));
             if (input?.category) u.searchParams.set("category", String(input.category));
             if (input?.tag) u.searchParams.set("tag", String(input.tag));
             if (input?.compatibility) u.searchParams.set("compatibility", String(input.compatibility));

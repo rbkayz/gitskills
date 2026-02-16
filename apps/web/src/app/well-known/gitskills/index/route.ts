@@ -4,6 +4,7 @@ import { prisma } from "@/lib/registry";
 export async function GET(req: Request) {
   const origin = new URL(req.url).origin;
   const top = await prisma.skill.findMany({
+    where: { status: "active" },
     orderBy: [{ downloadTotal: "desc" }, { trustScore: "desc" }],
     take: 20,
     include: { publisher: { select: { handle: true, displayName: true } } }
@@ -33,6 +34,7 @@ export async function GET(req: Request) {
   lines.push(`- Markdown search: \`${origin}/md/search.md?q=<query>\``);
   lines.push(`- JSON search: \`${origin}/api/skills?q=<query>\``);
   lines.push(`- Trusted skills (MD): \`${origin}/md/trusted.md\``);
+  lines.push(`- Trending skills (MD): \`${origin}/md/trending.md?days=7\``);
   lines.push("");
 
   return new NextResponse(lines.join("\n"), {

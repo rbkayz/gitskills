@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { computeTrustScore } from "@gitskills/sdk";
 
 const prisma = new PrismaClient();
 
@@ -30,19 +31,26 @@ async function main() {
       homepageUrl: "https://example.com/hello-world",
       repoUrl: "https://example.com/hello-world-repo",
       publisherId: demo.id,
-      trustScore: 60,
+      trustScore: computeTrustScore({
+        licenseSpdx: "MIT",
+        repoUrl: "https://example.com/hello-world-repo",
+        homepageUrl: "https://example.com/hello-world",
+        publisherVerified: demo.verified,
+        hasSkillMd: true,
+        hasLicenseFile: false,
+        signedRelease: false
+      }).score,
       trusted: true,
       trustTier: "silver",
-      trustBreakdownJson: {
-        rules: {
-          hasLicenseSpdx: 10,
-          hasRepoUrl: 10,
-          hasHomepageUrl: 10,
-          hasSkillMd: 10,
-          publisherVerified: 20
-        },
-        total: 60
-      },
+      trustBreakdownJson: computeTrustScore({
+        licenseSpdx: "MIT",
+        repoUrl: "https://example.com/hello-world-repo",
+        homepageUrl: "https://example.com/hello-world",
+        publisherVerified: demo.verified,
+        hasSkillMd: true,
+        hasLicenseFile: false,
+        signedRelease: false
+      }).breakdown,
       releases: {
         create: {
           version: "0.1.0",
@@ -75,19 +83,26 @@ async function main() {
       homepageUrl: "https://example.com/git-commit-helper",
       repoUrl: "https://example.com/git-commit-helper-repo",
       publisherId: demo.id,
-      trustScore: 50,
+      trustScore: computeTrustScore({
+        licenseSpdx: "Apache-2.0",
+        repoUrl: "https://example.com/git-commit-helper-repo",
+        homepageUrl: "https://example.com/git-commit-helper",
+        publisherVerified: demo.verified,
+        hasSkillMd: true,
+        hasLicenseFile: false,
+        signedRelease: false
+      }).score,
       trusted: false,
       trustTier: null,
-      trustBreakdownJson: {
-        rules: {
-          hasLicenseSpdx: 10,
-          hasRepoUrl: 10,
-          hasHomepageUrl: 10,
-          hasSkillMd: 10,
-          publisherVerified: 10
-        },
-        total: 50
-      },
+      trustBreakdownJson: computeTrustScore({
+        licenseSpdx: "Apache-2.0",
+        repoUrl: "https://example.com/git-commit-helper-repo",
+        homepageUrl: "https://example.com/git-commit-helper",
+        publisherVerified: demo.verified,
+        hasSkillMd: true,
+        hasLicenseFile: false,
+        signedRelease: false
+      }).breakdown,
       releases: {
         create: {
           version: "0.1.0",

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/registry";
 import styles from "./page.module.css";
 
@@ -10,19 +11,21 @@ function normalizeQuery(v: unknown): string {
 }
 
 export default async function Home(props: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const session = await auth();
   const sp = await props.searchParams;
   const q = normalizeQuery(sp.q);
   const tokens = q.split(/\s+/).filter(Boolean).slice(0, 8);
 
   const where: any = q
     ? {
+        status: "active",
         OR: [
           { name: { contains: q, mode: "insensitive" } },
           { summary: { contains: q, mode: "insensitive" } },
           ...(tokens.length ? [{ tags: { hasSome: tokens } }] : [])
         ]
       }
-    : {};
+    : { status: "active" };
 
   const skills = await prisma.skill.findMany({
     where,
@@ -47,6 +50,8 @@ export default async function Home(props: { searchParams: Promise<Record<string,
             <Link href="/md/search.md?q=commit%20message">Search (MD)</Link>
             <Link href="/trusted">Trusted</Link>
             <Link href="/md/trusted.md">Trusted (MD)</Link>
+            <Link href="/md/trending.md?days=7">Trending (MD)</Link>
+            {session?.user ? <Link href="/api/auth/signout">Sign out</Link> : <Link href="/api/auth/signin">Sign in</Link>}
           </nav>
         </div>
 
@@ -111,4 +116,3 @@ export default async function Home(props: { searchParams: Promise<Record<string,
     </div>
   );
 }
-

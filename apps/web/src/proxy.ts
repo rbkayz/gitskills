@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname === "/.well-known/gitskills/index.md") {
@@ -20,6 +20,11 @@ export function middleware(req: NextRequest) {
     url.pathname = "/md/trusted";
     return NextResponse.rewrite(url);
   }
+  if (pathname === "/md/trending.md") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/md/trending";
+    return NextResponse.rewrite(url);
+  }
 
   const m = pathname.match(/^\/md\/skills\/([^/]+)\.md$/);
   if (m) {
@@ -34,3 +39,4 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/.well-known/gitskills/:path*", "/md/:path*", "/well-known/gitskills/:path*"]
 };
+

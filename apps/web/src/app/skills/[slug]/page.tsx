@@ -9,11 +9,11 @@ export const dynamic = "force-dynamic";
 
 export default async function SkillPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
-  const skill = await prisma.skill.findUnique({
-    where: { slug },
+  const skill = await prisma.skill.findFirst({
+    where: { slug, status: "active" },
     include: {
       publisher: { select: { handle: true, displayName: true } },
-      releases: { orderBy: { createdAt: "desc" } }
+      releases: { where: { status: "active" }, orderBy: { createdAt: "desc" } }
     }
   });
 
@@ -108,4 +108,3 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
     </div>
   );
 }
-

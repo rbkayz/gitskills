@@ -6,10 +6,12 @@ Open-source skills marketplace (think npm for agent skills): human-friendly web 
 
 - **Registry API**: publish/search/fetch skills + versions + downloads + trust metadata
 - **Web**: browse + search + sort (downloads, trust score, recency), plus Markdown mirrors
+  - Optional GitHub login (Auth.js)
 - **Agent surfaces**
   - **Markdown-first endpoints** for easy scraping/reading by LLM agents
   - **MCP server** for structured discovery + retrieval
 - **CLI**: natural-language search, inspect, and install a skill into a local skills directory
+  - Publish flow with token auth: `gitskills publish <dir> ...`
 
 ## Repo Layout
 
@@ -28,4 +30,4 @@ Open-source skills marketplace (think npm for agent skills): human-friendly web 
 ## Next Step
 
 See `docs/PLAN.md` for the end-to-end plan and milestone breakdown.
-
+Production setup guidance for Supabase + GCP is in `docs/SUPABASE_GCP.md`.

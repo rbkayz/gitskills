@@ -15,6 +15,44 @@ function asBool(v: string | null): boolean | undefined {
   return undefined;
 }
 
+function tokenSet(s: string): Set<string> {
+  return new Set(
+    s
+      .toLowerCase()
+      .split(/[^a-z0-9]+/g)
+      .filter((x) => x.length > 1)
+  );
+}
+
+function hybridScore(s: any, q: string): number {
+  const qLower = q.toLowerCase();
+  const name = String(s.name ?? "").toLowerCase();
+  const summary = String(s.summary ?? "").toLowerCase();
+  const tags = Array.isArray(s.tags) ? s.tags.map((t: string) => t.toLowerCase()) : [];
+  const categories = Array.isArray(s.categories) ? s.categories.map((t: string) => t.toLowerCase()) : [];
+  const readme = String(s.readmeMd ?? "").toLowerCase();
+
+  let score = 0;
+  if (name === qLower) score += 50;
+  if (name.includes(qLower)) score += 25;
+  if (summary.includes(qLower)) score += 18;
+  if (readme.includes(qLower)) score += 8;
+  if (tags.some((t: string) => t.includes(qLower))) score += 15;
+  if (categories.some((t: string) => t.includes(qLower))) score += 6;
+
+  const qTokens = tokenSet(qLower);
+  const blobTokens = tokenSet(`${name} ${summary} ${tags.join(" ")} ${categories.join(" ")}`);
+  let overlap = 0;
+  for (const t of qTokens) if (blobTokens.has(t)) overlap += 1;
+  score += overlap * 6;
+
+  // Mild prior to prefer established, trustworthy skills.
+  score += Math.min(20, Math.floor((s.trustScore ?? 0) / 8));
+  score += Math.min(20, Math.floor(Math.log2((s.downloadTotal ?? 0) + 1)));
+
+  return score;
+}
+
 export async function GET(req: Request) {
   const u = new URL(req.url);
   const q = (u.searchParams.get("q") ?? "").trim();
@@ -24,6 +62,7 @@ export async function GET(req: Request) {
   const publisher = u.searchParams.get("publisher") ?? undefined;
   const minTrust = asInt(u.searchParams.get("minTrust"), 0);
   const trusted = asBool(u.searchParams.get("trusted"));
+  const mode = (u.searchParams.get("mode") ?? "keyword").trim().toLowerCase();
   const sort = (u.searchParams.get("sort") ?? "downloads") as "downloads" | "trust" | "recent";
   const page = Math.max(1, asInt(u.searchParams.get("page"), 1));
   const pageSize = Math.min(50, Math.max(1, asInt(u.searchParams.get("pageSize"), 20)));
@@ -31,6 +70,7 @@ export async function GET(req: Request) {
   const tokens = q.split(/\s+/).filter(Boolean).slice(0, 8);
 
   const where: any = {
+    status: "active",
     trustScore: { gte: minTrust }
   };
   if (category) where.categories = { has: category };
@@ -42,6 +82,7 @@ export async function GET(req: Request) {
     where.OR = [
       { name: { contains: q, mode: "insensitive" } },
       { summary: { contains: q, mode: "insensitive" } },
+      ...(mode === "hybrid" ? [{ readmeMd: { contains: q, mode: "insensitive" } }] : []),
       ...(tokens.length ? [{ tags: { hasSome: tokens } }] : [])
     ];
   }
@@ -53,19 +94,39 @@ export async function GET(req: Request) {
         ? [{ updatedAt: "desc" as const }]
         : [{ downloadTotal: "desc" as const }, { trustScore: "desc" as const }];
 
-  const [total, rows] = await Promise.all([
-    prisma.skill.count({ where }),
-    prisma.skill.findMany({
+  let total = 0;
+  let rows: any[] = [];
+
+  if (mode === "hybrid" && q) {
+    const candidates = await prisma.skill.findMany({
       where,
       include: { publisher: { select: { handle: true, displayName: true } } },
-      orderBy,
-      skip: (page - 1) * pageSize,
-      take: pageSize
-    })
-  ]);
+      take: 200
+    });
+    const ranked = candidates
+      .map((s) => ({ s, _score: hybridScore(s, q) }))
+      .sort((a, b) => b._score - a._score)
+      .map((x) => x.s);
+    total = ranked.length;
+    rows = ranked.slice((page - 1) * pageSize, page * pageSize);
+  } else {
+    const out = await Promise.all([
+      prisma.skill.count({ where }),
+      prisma.skill.findMany({
+        where,
+        include: { publisher: { select: { handle: true, displayName: true } } },
+        orderBy,
+        skip: (page - 1) * pageSize,
+        take: pageSize
+      })
+    ]);
+    total = out[0];
+    rows = out[1] as any[];
+  }
 
   return NextResponse.json({
     query: q,
+    mode,
     page,
     pageSize,
     total,
@@ -73,6 +134,7 @@ export async function GET(req: Request) {
       slug: s.slug,
       name: s.name,
       summary: s.summary,
+      status: s.status,
       tags: s.tags,
       categories: s.categories,
       compatibility: s.compatibility,

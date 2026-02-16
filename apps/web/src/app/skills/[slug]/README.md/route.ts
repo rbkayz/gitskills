@@ -6,7 +6,7 @@ export async function GET(_req: Request, ctx: any) {
   const params = typeof paramsAny?.then === "function" ? await paramsAny : paramsAny;
   const slug = params.slug as string;
 
-  const skill = await prisma.skill.findUnique({ where: { slug }, select: { readmeMd: true } });
+  const skill = await prisma.skill.findFirst({ where: { slug, status: "active" }, select: { readmeMd: true } });
   if (!skill) return new NextResponse("Not Found\n", { status: 404, headers: { "content-type": "text/plain" } });
 
   return new NextResponse(skill.readmeMd, {
@@ -14,4 +14,3 @@ export async function GET(_req: Request, ctx: any) {
     headers: { "content-type": "text/markdown; charset=utf-8" }
   });
 }
-

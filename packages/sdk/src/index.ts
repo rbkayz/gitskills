@@ -1,6 +1,7 @@
 import type { SearchFilters, SearchResult, SkillDetail } from "./types.js";
 
 export * from "./types.js";
+export * from "./trust.js";
 
 export class RegistryClient {
   readonly baseUrl: string;
@@ -12,6 +13,7 @@ export class RegistryClient {
   async searchSkills(query: string, filters: SearchFilters = {}): Promise<SearchResult> {
     const u = new URL(this.baseUrl + "/api/skills");
     u.searchParams.set("q", query);
+    if (filters.mode) u.searchParams.set("mode", filters.mode);
     if (filters.category) u.searchParams.set("category", filters.category);
     if (filters.tag) u.searchParams.set("tag", filters.tag);
     if (filters.compatibility) u.searchParams.set("compatibility", filters.compatibility);

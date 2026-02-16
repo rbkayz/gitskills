@@ -14,6 +14,12 @@ enum TrustTier {
   gold
 }
 
+enum ModerationStatus {
+  active
+  hidden
+  blocked
+}
+
 model Publisher {
   id          String   @id @default(cuid())
   handle      String   @unique
@@ -42,6 +48,7 @@ model Skill {
   trustBreakdownJson Json    @default("{}")
   trusted           Boolean  @default(false)
   trustTier         TrustTier?
+  status            ModerationStatus @default(active)
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -50,6 +57,8 @@ model Skill {
   publisher         Publisher @relation(fields: [publisherId], references: [id], onDelete: Restrict)
 
   releases          Release[]
+  moderationEvents  ModerationEvent[] @relation("SkillModerationEvents")
+  dailyDownloads    DailySkillDownload[]
 
   @@index([publisherId])
   @@index([trusted, trustTier])
@@ -62,11 +71,48 @@ model Release {
   sha256        String
   sizeBytes     Int
   downloadTotal Int      @default(0)
+  status        ModerationStatus @default(active)
   createdAt     DateTime @default(now())
 
   skillId       String
   skill         Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  moderationEvents ModerationEvent[] @relation("ReleaseModerationEvents")
 
   @@unique([skillId, version])
   @@index([skillId])
+  @@index([status])
+}
+
+model DailySkillDownload {
+  id        String   @id @default(cuid())
+  day       DateTime
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  skillId   String
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, day])
+  @@index([day])
+  @@index([skillId])
+}
+
+model ModerationEvent {
+  id            String   @id @default(cuid())
+  actor         String
+  reason        String
+  fromStatus    ModerationStatus
+  toStatus      ModerationStatus
+  createdAt     DateTime @default(now())
+
+  skillId       String?
+  skill         Skill?   @relation("SkillModerationEvents", fields: [skillId], references: [id], onDelete: Cascade)
+
+  releaseId     String?
+  release       Release? @relation("ReleaseModerationEvents", fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([skillId])
+  @@index([releaseId])
 }
