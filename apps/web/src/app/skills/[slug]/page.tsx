@@ -43,6 +43,7 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
             <p className={styles.summary}>{skill.summary}</p>
             <div className={styles.metaRow}>
               <span>publisher {skill.publisher.handle}</span>
+              {skill.trusted ? <span className={styles.trustBadge}>{skill.trustTier ?? "community"} trusted</span> : null}
               <span>trust {skill.trustScore}</span>
               <span>downloads {skill.downloadTotal}</span>
               <span>{skill.licenseSpdx ?? "license unknown"}</span>
@@ -98,8 +99,13 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
             ·
           </span>
           <a href="/md/search.md?q=hello">Markdown search</a>
+          <span className={styles.dot} aria-hidden="true">
+            ·
+          </span>
+          <a href="/trusted">Trusted</a>
         </footer>
       </div>
     </div>
   );
 }
+

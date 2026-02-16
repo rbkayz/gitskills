@@ -45,6 +45,8 @@ export default async function Home(props: { searchParams: Promise<Record<string,
           <nav className={styles.nav}>
             <Link href="/.well-known/gitskills/index.md">Agent Index (MD)</Link>
             <Link href="/md/search.md?q=commit%20message">Search (MD)</Link>
+            <Link href="/trusted">Trusted</Link>
+            <Link href="/md/trusted.md">Trusted (MD)</Link>
           </nav>
         </div>
 
@@ -79,7 +81,7 @@ export default async function Home(props: { searchParams: Promise<Record<string,
 
       <section className={styles.results}>
         <div className={styles.resultsHeader}>
-          <h2>{q ? `Results for “${q}”` : "Trending"}</h2>
+          <h2>{q ? `Results for "${q}"` : "Trending"}</h2>
           <div className={styles.resultsHint}>
             Install via CLI: <code>gitskills install &lt;slug&gt;</code>
           </div>
@@ -91,6 +93,7 @@ export default async function Home(props: { searchParams: Promise<Record<string,
               <div className={styles.cardTop}>
                 <div className={styles.slug}>{s.slug}</div>
                 <div className={styles.metrics}>
+                  {s.trusted ? <span className={styles.trustBadge}>{s.trustTier ?? "community"}</span> : null}
                   <span>trust {s.trustScore}</span>
                   <span>downloads {s.downloadTotal}</span>
                 </div>
@@ -108,3 +111,4 @@ export default async function Home(props: { searchParams: Promise<Record<string,
     </div>
   );
 }
+

@@ -11,7 +11,10 @@ async function main() {
 
   await prisma.skill.upsert({
     where: { slug: "hello-world" },
-    update: {},
+    update: {
+      trusted: true,
+      trustTier: "silver"
+    },
     create: {
       slug: "hello-world",
       name: "Hello World",
@@ -28,6 +31,8 @@ async function main() {
       repoUrl: "https://example.com/hello-world-repo",
       publisherId: demo.id,
       trustScore: 60,
+      trusted: true,
+      trustTier: "silver",
       trustBreakdownJson: {
         rules: {
           hasLicenseSpdx: 10,
@@ -51,7 +56,10 @@ async function main() {
 
   await prisma.skill.upsert({
     where: { slug: "git-commit-helper" },
-    update: {},
+    update: {
+      trusted: false,
+      trustTier: null
+    },
     create: {
       slug: "git-commit-helper",
       name: "Git Commit Helper",
@@ -68,6 +76,8 @@ async function main() {
       repoUrl: "https://example.com/git-commit-helper-repo",
       publisherId: demo.id,
       trustScore: 50,
+      trusted: false,
+      trustTier: null,
       trustBreakdownJson: {
         rules: {
           hasLicenseSpdx: 10,

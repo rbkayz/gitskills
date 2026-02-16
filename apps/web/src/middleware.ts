@@ -15,6 +15,11 @@ export function middleware(req: NextRequest) {
     url.pathname = "/md/search";
     return NextResponse.rewrite(url);
   }
+  if (pathname === "/md/trusted.md") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/md/trusted";
+    return NextResponse.rewrite(url);
+  }
 
   const m = pathname.match(/^\/md\/skills\/([^/]+)\.md$/);
   if (m) {
@@ -29,4 +34,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/.well-known/gitskills/:path*", "/md/:path*", "/well-known/gitskills/:path*"]
 };
-

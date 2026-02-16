@@ -17,6 +17,7 @@ export class RegistryClient {
     if (filters.compatibility) u.searchParams.set("compatibility", filters.compatibility);
     if (filters.publisher) u.searchParams.set("publisher", filters.publisher);
     if (filters.minTrust != null) u.searchParams.set("minTrust", String(filters.minTrust));
+    if (filters.trusted != null) u.searchParams.set("trusted", String(filters.trusted));
     if (filters.sort) u.searchParams.set("sort", filters.sort);
     if (filters.page != null) u.searchParams.set("page", String(filters.page));
     if (filters.pageSize != null) u.searchParams.set("pageSize", String(filters.pageSize));
@@ -38,4 +39,3 @@ export class RegistryClient {
     return await res.text();
   }
 }
-

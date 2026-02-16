@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TrustTier {
+  community
+  bronze
+  silver
+  gold
+}
+
 model Publisher {
   id          String   @id @default(cuid())
   handle      String   @unique
@@ -33,6 +40,8 @@ model Skill {
   downloadTotal     Int      @default(0)
   trustScore        Int      @default(0)
   trustBreakdownJson Json    @default("{}")
+  trusted           Boolean  @default(false)
+  trustTier         TrustTier?
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -43,6 +52,7 @@ model Skill {
   releases          Release[]
 
   @@index([publisherId])
+  @@index([trusted, trustTier])
 }
 
 model Release {
@@ -60,4 +70,3 @@ model Release {
   @@unique([skillId, version])
   @@index([skillId])
 }
-

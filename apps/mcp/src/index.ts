@@ -24,6 +24,7 @@ server.registerTool(
       compatibility: z.string().optional(),
       publisher: z.string().optional(),
       minTrust: z.number().int().min(0).max(100).optional(),
+      trusted: z.boolean().optional(),
       sort: z.enum(["downloads", "trust", "recent"]).optional(),
       page: z.number().int().min(1).optional(),
       pageSize: z.number().int().min(1).max(50).optional()
@@ -39,6 +40,8 @@ server.registerTool(
           name: z.string(),
           summary: z.string(),
           trustScore: z.number().int(),
+          trusted: z.boolean(),
+          trustTier: z.string().nullable(),
           downloadTotal: z.number().int(),
           publisher: z.object({ handle: z.string() }),
           install: z.string()
@@ -53,6 +56,7 @@ server.registerTool(
       compatibility: args.compatibility,
       publisher: args.publisher,
       minTrust: args.minTrust,
+      trusted: args.trusted,
       sort: args.sort,
       page: args.page,
       pageSize: args.pageSize
@@ -68,6 +72,8 @@ server.registerTool(
         name: s.name,
         summary: s.summary,
         trustScore: s.trustScore,
+        trusted: s.trusted,
+        trustTier: s.trustTier,
         downloadTotal: s.downloadTotal,
         publisher: { handle: s.publisher.handle },
         install: `gitskills install ${s.slug}`
@@ -191,4 +197,3 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-

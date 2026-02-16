@@ -44,6 +44,17 @@
   color: var(--muted);
 }
 
+.trustBadge {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0b3d2e;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  background: rgba(16, 185, 129, 0.13);
+  border-radius: 999px;
+  padding: 3px 7px;
+}
+
 .actions {
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -222,4 +233,3 @@
     font-size: 30px;
   }
 }
-

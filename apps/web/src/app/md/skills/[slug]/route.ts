@@ -25,6 +25,7 @@ export async function GET(req: Request, ctx: any) {
   lines.push(`- summary: ${skill.summary}`);
   lines.push(`- publisher: ${skill.publisher.handle}`);
   lines.push(`- trust: ${skill.trustScore}`);
+  lines.push(`- trusted: ${skill.trusted ? `yes (${skill.trustTier ?? "community"})` : "no"}`);
   lines.push(`- downloads: ${skill.downloadTotal}`);
   lines.push(`- tags: ${skill.tags.join(", ") || "(none)"}`);
   lines.push(`- categories: ${skill.categories.join(", ") || "(none)"}`);
@@ -57,4 +58,3 @@ export async function GET(req: Request, ctx: any) {
     headers: { "content-type": "text/markdown; charset=utf-8" }
   });
 }
-

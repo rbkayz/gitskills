@@ -57,6 +57,7 @@ export function WebMcpProvider() {
             compatibility: { type: "string" },
             publisher: { type: "string" },
             minTrust: { type: "number", minimum: 0, maximum: 100 },
+            trusted: { type: "boolean" },
             sort: { type: "string", enum: ["downloads", "trust", "recent"] },
             page: { type: "number", minimum: 1 },
             pageSize: { type: "number", minimum: 1, maximum: 50 }
@@ -72,6 +73,7 @@ export function WebMcpProvider() {
             if (input?.compatibility) u.searchParams.set("compatibility", String(input.compatibility));
             if (input?.publisher) u.searchParams.set("publisher", String(input.publisher));
             if (input?.minTrust != null) u.searchParams.set("minTrust", String(input.minTrust));
+            if (input?.trusted != null) u.searchParams.set("trusted", String(Boolean(input.trusted)));
             if (input?.sort) u.searchParams.set("sort", String(input.sort));
             if (input?.page != null) u.searchParams.set("page", String(input.page));
             if (input?.pageSize != null) u.searchParams.set("pageSize", String(input.pageSize));
@@ -175,4 +177,3 @@ export function WebMcpProvider() {
 
   return null;
 }
-

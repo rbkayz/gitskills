@@ -10,6 +10,7 @@ This repo builds a skills marketplace with explicit **agent interfaces**:
 
 - Index: `/.well-known/gitskills/index.md`
 - Search: `/md/search.md?q=<natural language>&category=...&tag=...`
+- Trusted feed: `/md/trusted.md`
 - Skill card: `/md/skills/<slug>.md`
 - README: `/skills/<slug>/README.md`
 

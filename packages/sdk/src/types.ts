@@ -1,4 +1,5 @@
 export type SortMode = "downloads" | "trust" | "recent";
+export type TrustTier = "community" | "bronze" | "silver" | "gold";
 
 export type SkillSummary = {
   slug: string;
@@ -11,6 +12,8 @@ export type SkillSummary = {
   publisher: { handle: string; displayName: string | null };
   downloadTotal: number;
   trustScore: number;
+  trusted: boolean;
+  trustTier: TrustTier | null;
   updatedAt: string; // ISO
 };
 
@@ -37,6 +40,7 @@ export type SearchFilters = {
   compatibility?: string;
   publisher?: string;
   minTrust?: number;
+  trusted?: boolean;
   sort?: SortMode;
   page?: number;
   pageSize?: number;

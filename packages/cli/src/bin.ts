@@ -38,6 +38,7 @@ program
   .option("--compatibility <compat>", "filter by compatibility")
   .option("--publisher <handle>", "filter by publisher handle")
   .option("--min-trust <n>", "minimum trust score", (v) => Number(v))
+  .option("--trusted", "only show trusted skills")
   .option("--sort <mode>", "downloads|trust|recent", "downloads")
   .action(async (query: string, options) => {
     const cfg = loadConfig();
@@ -48,6 +49,7 @@ program
       compatibility: options.compatibility,
       publisher: options.publisher,
       minTrust: Number.isFinite(options.minTrust) ? options.minTrust : undefined,
+      trusted: Boolean(options.trusted) || undefined,
       sort: options.sort
     });
     for (const s of res.skills) {
@@ -68,6 +70,7 @@ program
     process.stdout.write(`${s.name} (${s.slug})\n`);
     process.stdout.write(`${s.summary}\n\n`);
     process.stdout.write(`trust: ${s.trustScore}\n`);
+    process.stdout.write(`trusted: ${s.trusted ? `yes (${s.trustTier ?? "community"})` : "no"}\n`);
     process.stdout.write(`downloads: ${s.downloadTotal}\n`);
     process.stdout.write(`publisher: ${s.publisher.handle}\n`);
     process.stdout.write(`tags: ${s.tags.join(", ")}\n`);

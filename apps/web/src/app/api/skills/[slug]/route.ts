@@ -30,6 +30,8 @@ export async function GET(req: Request, ctx: { params: { slug: string } } | { pa
     publisher: skill.publisher,
     downloadTotal: skill.downloadTotal,
     trustScore: skill.trustScore,
+    trusted: skill.trusted,
+    trustTier: skill.trustTier,
     trustBreakdown: skill.trustBreakdownJson,
     updatedAt: skill.updatedAt.toISOString(),
     releases: skill.releases.map((r: any) => ({
