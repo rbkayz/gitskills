@@ -26,6 +26,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Skills trust check
+        run: npm run skills:trust:check
+
       - name: SDK tests
         run: npm --workspace @gitskills/sdk run test
 

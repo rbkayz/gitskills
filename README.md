@@ -20,6 +20,7 @@ Open-source skills marketplace (think npm for agent skills): human-friendly web 
 - `packages/cli`: `gitskills` CLI
 - `packages/sdk`: TS client + shared types
 - `packages/db`: Prisma schema + migrations
+- `skills/`: repository-backed skill catalog (`skill.yaml` + `SKILL.md`)
 - `docs/PLAN.md`: full build/deploy plan
 
 ## CI/CD
@@ -32,3 +33,14 @@ Open-source skills marketplace (think npm for agent skills): human-friendly web 
 See `docs/PLAN.md` for the end-to-end plan and milestone breakdown.
 Production setup guidance for Supabase + GCP is in `docs/SUPABASE_GCP.md`.
 Agent integration surfaces are documented in `docs/AGENT_ACCESS.md`.
+
+## Skill Contribution Flow
+
+- Read: `docs/SKILL_PUBLISHING_GUIDE.md`
+- Start from templates:
+  - `skills/templates/skill.template.yaml`
+  - `skills/templates/SKILL.md`
+- Refresh computed trust fields before PR:
+  - `npm run skills:trust`
+
+PRs that change `skills/**` run a trust-review gate in GitHub Actions. Merge is blocked if trust validation fails.

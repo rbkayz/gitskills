@@ -1,0 +1,52 @@
+schema_version: 1
+slug: voltagent-awesome-agent-skills
+name: VoltAgent Awesome Agent Skills (Upstream Source)
+summary: Curated upstream source entry for a broad multi-ecosystem skills catalog.
+license_spdx: MIT
+homepage_url: null
+repo_url: https://github.com/VoltAgent/awesome-agent-skills
+publisher:
+  handle: voltagent
+  display_name: VoltAgent
+  verified: true
+categories:
+  - catalog
+  - upstream
+tags:
+  - agent
+  - catalog
+  - multi-platform
+compatibility:
+  - codex
+  - claude-code
+source:
+  kind: github_repo
+  url: https://github.com/VoltAgent/awesome-agent-skills
+  stars: 7150
+  updated_at: 2026-02-16T08:44:14Z
+  imported_at: 2026-02-16
+artifacts:
+  skill_md: SKILL.md
+trust_inputs:
+  has_skill_md: true
+  has_license_file: true
+  signed_release: false
+review:
+  min_trust_required: 50
+computed:
+  trust_score: 70
+  trust_tier: silver
+  trusted: true
+  breakdown:
+    rules:
+      hasLicenseSpdx: 10
+      hasRepoUrl: 10
+      hasHomepageUrl: 0
+      publisherVerified: 20
+      hasSkillMd: 15
+      hasLicenseFile: 15
+      signedRelease: 0
+    total: 70
+    tier: silver
+    trusted: true
+  reviewed_at: 2026-02-16T08:47:54.962Z

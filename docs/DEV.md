@@ -76,6 +76,16 @@ node packages/cli/dist/bin.js search "best git commits" --mode hybrid
 node packages/cli/dist/bin.js install hello-world --dir ./tmp/skills
 ```
 
+## Skill Catalog Trust Checks
+
+```bash
+# recompute trust fields in skills/registry/**/skill.yaml
+npm run skills:trust
+
+# validate without writing (used in CI)
+npm run skills:trust:check
+```
+
 ## Publish A Skill (Token Auth)
 
 ```bash

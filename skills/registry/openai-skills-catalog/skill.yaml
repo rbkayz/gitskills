@@ -1,0 +1,51 @@
+schema_version: 1
+slug: openai-skills-catalog
+name: OpenAI Skills Catalog (Upstream Source)
+summary: Curated upstream source entry for the official OpenAI Codex skills catalog.
+license_spdx: null
+homepage_url: null
+repo_url: https://github.com/openai/skills
+publisher:
+  handle: openai
+  display_name: OpenAI
+  verified: true
+categories:
+  - catalog
+  - upstream
+tags:
+  - codex
+  - openai
+  - skills
+compatibility:
+  - codex
+source:
+  kind: github_repo
+  url: https://github.com/openai/skills
+  stars: 8640
+  updated_at: 2026-02-16T08:41:44Z
+  imported_at: 2026-02-16
+artifacts:
+  skill_md: SKILL.md
+trust_inputs:
+  has_skill_md: true
+  has_license_file: false
+  signed_release: false
+review:
+  min_trust_required: 40
+computed:
+  trust_score: 45
+  trust_tier: community
+  trusted: false
+  breakdown:
+    rules:
+      hasLicenseSpdx: 0
+      hasRepoUrl: 10
+      hasHomepageUrl: 0
+      publisherVerified: 20
+      hasSkillMd: 15
+      hasLicenseFile: 0
+      signedRelease: 0
+    total: 45
+    tier: community
+    trusted: false
+  reviewed_at: 2026-02-16T08:47:54.962Z

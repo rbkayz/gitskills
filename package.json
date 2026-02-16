@@ -14,7 +14,9 @@
     "docker:down": "docker compose down",
     "build": "npm -ws run build",
     "lint": "npm -ws run lint",
-    "typecheck": "npm -ws run typecheck"
+    "typecheck": "npm -ws run typecheck",
+    "skills:trust": "node scripts/skills/review-trust.mjs --write",
+    "skills:trust:check": "node scripts/skills/review-trust.mjs --check"
   },
   "workspaces": [
     "apps/*",
@@ -23,5 +25,8 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "description": "Open-source skills marketplace (registry + web + MCP + CLI)."
+  "description": "Open-source skills marketplace (registry + web + MCP + CLI).",
+  "devDependencies": {
+    "yaml": "^2.8.1"
+  }
 }

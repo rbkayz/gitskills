@@ -1,0 +1,8 @@
+# Default owner
+* @rbkayz
+
+# Skills and trust-governance paths
+skills/** @rbkayz
+docs/SKILL_PUBLISHING_GUIDE.md @rbkayz
+scripts/skills/** @rbkayz
+.github/workflows/skills-trust-gate.yml @rbkayz

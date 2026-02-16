@@ -1,0 +1,43 @@
+schema_version: 1
+slug: example-skill
+name: Example Skill
+summary: Short summary of what this skill does.
+license_spdx: MIT
+homepage_url: https://example.com/skills/example-skill
+repo_url: https://github.com/example/example-skill
+publisher:
+  handle: example
+  display_name: Example Publisher
+  verified: false
+categories:
+  - productivity
+tags:
+  - example
+  - template
+compatibility:
+  - codex
+  - claude-code
+source:
+  kind: github_repo
+  url: https://github.com/example/example-skill
+  stars: 0
+  updated_at: 2026-01-01T00:00:00Z
+  imported_at: 2026-02-16
+artifacts:
+  skill_md: SKILL.md
+trust_inputs:
+  has_skill_md: true
+  has_license_file: true
+  signed_release: false
+review:
+  min_trust_required: 50
+computed:
+  trust_score: 0
+  trust_tier: community
+  trusted: false
+  breakdown:
+    rules: {}
+    total: 0
+    tier: community
+    trusted: false
+  reviewed_at: null
