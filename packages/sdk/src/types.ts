@@ -51,6 +51,7 @@ export type SearchFilters = {
 
 export type SearchResult = {
   query: string;
+  mode?: "keyword" | "hybrid" | string;
   page: number;
   pageSize: number;
   total: number;

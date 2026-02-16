@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/registry";
+import { cosineSimilarity, embedText } from "@/lib/embeddings";
 
 function asInt(v: string | null, fallback: number): number {
   if (!v) return fallback;
@@ -24,7 +25,7 @@ function tokenSet(s: string): Set<string> {
   );
 }
 
-function hybridScore(s: any, q: string): number {
+function hybridScore(s: any, q: string, queryEmbedding: number[] | null): number {
   const qLower = q.toLowerCase();
   const name = String(s.name ?? "").toLowerCase();
   const summary = String(s.summary ?? "").toLowerCase();
@@ -49,6 +50,13 @@ function hybridScore(s: any, q: string): number {
   // Mild prior to prefer established, trustworthy skills.
   score += Math.min(20, Math.floor((s.trustScore ?? 0) / 8));
   score += Math.min(20, Math.floor(Math.log2((s.downloadTotal ?? 0) + 1)));
+  if (queryEmbedding && Array.isArray(s.embedding) && s.embedding.length === queryEmbedding.length) {
+    const vec = cosineSimilarity(
+      queryEmbedding,
+      s.embedding.map((x: any) => Number(x))
+    );
+    score += Math.max(0, vec) * 40;
+  }
 
   return score;
 }
@@ -98,13 +106,14 @@ export async function GET(req: Request) {
   let rows: any[] = [];
 
   if (mode === "hybrid" && q) {
+    const queryEmbedding = await embedText(q);
     const candidates = await prisma.skill.findMany({
       where,
       include: { publisher: { select: { handle: true, displayName: true } } },
       take: 200
     });
     const ranked = candidates
-      .map((s) => ({ s, _score: hybridScore(s, q) }))
+      .map((s) => ({ s, _score: hybridScore(s, q, queryEmbedding) }))
       .sort((a, b) => b._score - a._score)
       .map((x) => x.s);
     total = ranked.length;

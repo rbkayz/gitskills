@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/registry";
 import { uploadTarball } from "@/lib/storage";
+import { embedText } from "@/lib/embeddings";
 import { computeTrustScore } from "@/lib/trust";
 
 export const runtime = "nodejs";
@@ -164,6 +165,7 @@ export async function POST(req: Request) {
     hasLicenseFile: evidence.hasLicenseFile,
     signedRelease: false
   });
+  const embedding = await embedText(`${name}\n${summary}\n${tags.join(" ")}\n${evidence.readmeMd.slice(0, 3000)}`);
 
   const uploaded = await uploadTarball({ slug, version, bytes: tarBuf });
   const tarballUrl = uploaded.tarballUrl;
@@ -184,7 +186,8 @@ export async function POST(req: Request) {
         repoUrl: manifest.repoUrl ?? null,
         publisherId: publisher.id,
         trustScore: trust.score,
-        trustBreakdownJson: trust.breakdown
+        trustBreakdownJson: trust.breakdown,
+        embedding: embedding ?? []
       },
       select: { id: true }
     });
@@ -203,7 +206,8 @@ export async function POST(req: Request) {
         homepageUrl: manifest.homepageUrl ?? null,
         repoUrl: manifest.repoUrl ?? null,
         trustScore: trust.score,
-        trustBreakdownJson: trust.breakdown
+        trustBreakdownJson: trust.breakdown,
+        ...(embedding ? { embedding } : {})
       }
     });
   }

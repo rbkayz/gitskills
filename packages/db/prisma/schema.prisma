@@ -49,6 +49,7 @@ model Skill {
   trusted           Boolean  @default(false)
   trustTier         TrustTier?
   status            ModerationStatus @default(active)
+  embedding         Float[]  @default([])
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt

@@ -35,6 +35,13 @@ $env:GITHUB_CLIENT_ID="..."
 $env:GITHUB_CLIENT_SECRET="..."
 ```
 
+Optional for embedding-backed hybrid search:
+
+```bash
+$env:OPENAI_API_KEY="..."
+$env:OPENAI_EMBEDDING_MODEL="text-embedding-3-small"
+```
+
 Useful URLs (assuming `-p 3001`):
 
 - `http://localhost:3001/`
@@ -63,6 +70,7 @@ If a client provides the WebMCP API (`navigator.modelContext`), the web app regi
 npm run build:cli
 node packages/cli/dist/bin.js registry set http://localhost:3001
 node packages/cli/dist/bin.js search "commit helper"
+node packages/cli/dist/bin.js search "best git commits" --mode hybrid
 node packages/cli/dist/bin.js install hello-world --dir ./tmp/skills
 ```
 
