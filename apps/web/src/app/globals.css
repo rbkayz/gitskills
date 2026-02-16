@@ -1,0 +1,44 @@
+:root {
+  --ink: rgba(2, 6, 23, 0.92);
+  --muted: rgba(2, 6, 23, 0.62);
+  --line: rgba(2, 6, 23, 0.12);
+
+  --bg0: #fbfbfc;
+  --bg1: #f3f6ff;
+  --bg2: #f6fff7;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(34, 211, 238, 0.22), rgba(34, 211, 238, 0) 60%),
+    radial-gradient(900px 520px at 90% 10%, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0) 58%),
+    radial-gradient(900px 560px at 50% 100%, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0) 65%),
+    linear-gradient(180deg, var(--bg1), var(--bg0) 40%, var(--bg2));
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+code {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+}

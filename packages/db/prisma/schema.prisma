@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Publisher {
+  id          String   @id @default(cuid())
+  handle      String   @unique
+  displayName String?
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  skills Skill[]
+}
+
+model Skill {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  name              String
+  summary           String
+  readmeMd          String
+  categories        String[] @default([])
+  tags              String[] @default([])
+  compatibility     String[] @default([])
+  licenseSpdx       String?
+  homepageUrl       String?
+  repoUrl           String?
+
+  downloadTotal     Int      @default(0)
+  trustScore        Int      @default(0)
+  trustBreakdownJson Json    @default("{}")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  publisherId       String
+  publisher         Publisher @relation(fields: [publisherId], references: [id], onDelete: Restrict)
+
+  releases          Release[]
+
+  @@index([publisherId])
+}
+
+model Release {
+  id            String   @id @default(cuid())
+  version       String
+  tarballUrl    String
+  sha256        String
+  sizeBytes     Int
+  downloadTotal Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  skillId       String
+  skill         Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, version])
+  @@index([skillId])
+}
+

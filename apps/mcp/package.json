@@ -1,0 +1,22 @@
+{
+  "name": "gitskills-mcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "lint": "echo \"(todo)\"",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@gitskills/sdk": "*",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.3"
+  }
+}

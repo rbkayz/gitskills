@@ -1,0 +1,27 @@
+{
+  "name": "gitskills",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm -ws run dev",
+    "dev:web": "npm --workspace web run dev -- -p 3001",
+    "dev:mcp": "npm --workspace gitskills-mcp run dev",
+    "build:cli": "npm --workspace gitskills run build",
+    "build:mcp": "npm --workspace gitskills-mcp run build",
+    "db:migrate": "npm --workspace @gitskills/db run prisma:migrate",
+    "db:seed": "npm --workspace @gitskills/db run db:seed",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "build": "npm -ws run build",
+    "lint": "npm -ws run lint",
+    "typecheck": "npm -ws run typecheck"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "Open-source skills marketplace (registry + web + MCP + CLI)."
+}
