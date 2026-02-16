@@ -1,0 +1,47 @@
+name: Release Artifacts
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: npm run build:cli
+
+      - name: Build MCP
+        run: npm run build:mcp
+
+      - name: Package artifacts
+        run: |
+          mkdir -p release
+          tar -czf release/gitskills-cli-${{ github.ref_name }}.tgz -C packages/cli/dist .
+          tar -czf release/gitskills-mcp-${{ github.ref_name }}.tgz -C apps/mcp/dist .
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/gitskills-cli-${{ github.ref_name }}.tgz
+            release/gitskills-mcp-${{ github.ref_name }}.tgz
+
