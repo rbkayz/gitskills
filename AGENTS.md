@@ -44,3 +44,8 @@ If the browser provides the WebMCP API (`navigator.modelContext`), the website r
 - `gitskills search "<query>"`
 - `gitskills info <slug>`
 - `gitskills install <slug> [--version v] [--dir path]`
+
+## Style Preferences
+
+- Database identifiers must use lowercase snake_case.
+- Prisma model field names may stay camelCase for TypeScript ergonomics, but must map to snake_case DB columns via `@map(...)`.
