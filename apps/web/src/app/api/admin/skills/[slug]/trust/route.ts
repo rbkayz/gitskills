@@ -8,7 +8,7 @@ type Body = { trusted?: boolean; trustTier?: TrustTier | null };
 const ALLOWED_TIERS: TrustTier[] = ["community", "bronze", "silver", "gold"];
 
 export async function PATCH(req: Request, ctx: any) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if (!auth.ok) return auth.response;
 
   const paramsAny = ctx?.params;

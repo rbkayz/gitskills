@@ -7,7 +7,7 @@ import { prisma } from "@/lib/registry";
 const ALLOWED: ModerationStatus[] = ["active", "hidden", "blocked"];
 
 export async function PATCH(req: Request, ctx: any) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if (!auth.ok) return auth.response;
 
   const paramsAny = ctx?.params;
@@ -53,4 +53,3 @@ export async function PATCH(req: Request, ctx: any) {
     updatedAt: updated.updatedAt.toISOString()
   });
 }
-

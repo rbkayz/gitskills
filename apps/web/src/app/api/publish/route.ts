@@ -9,6 +9,7 @@ import { prisma } from "@/lib/registry";
 import { uploadTarball } from "@/lib/storage";
 import { embedText } from "@/lib/embeddings";
 import { computeTrustScore } from "@/lib/trust";
+import { getCurrentUser } from "@/lib/current-user";
 
 export const runtime = "nodejs";
 
@@ -86,12 +87,63 @@ function asArray(v: unknown): string[] {
   return v.filter((x): x is string => typeof x === "string").map((x) => x.trim()).filter(Boolean).slice(0, 30);
 }
 
-export async function POST(req: Request) {
-  const token = req.headers.get("x-publish-token");
-  const expected = process.env.PUBLISH_TOKEN;
-  if (!expected) return bad("publish token is not configured", 501);
-  if (!token || token !== expected) return bad("unauthorized", 401);
+async function authorizePublish(req: Request, publisherHandle: string) {
+  const user = await getCurrentUser();
+  if (user) {
+    const existingPublisher = await prisma.publisher.findUnique({
+      where: { handle: publisherHandle },
+      select: { id: true, handle: true, verified: true }
+    });
 
+    if (!existingPublisher) {
+      const createdPublisher = await prisma.publisher.create({
+        data: {
+          handle: publisherHandle,
+          displayName: publisherHandle,
+          members: {
+            create: {
+              userId: user.id,
+              role: "owner"
+            }
+          }
+        },
+        select: { id: true, handle: true, verified: true }
+      });
+      return { publisher: createdPublisher, actor: user.githubLogin, mode: "session" as const };
+    }
+
+    const membership = await prisma.publisherMember.findUnique({
+      where: {
+        publisherId_userId: {
+          publisherId: existingPublisher.id,
+          userId: user.id
+        }
+      },
+      select: { role: true }
+    });
+
+    if (!membership || (membership.role !== "owner" && membership.role !== "maintainer")) {
+      throw new Error("forbidden_publisher_membership");
+    }
+
+    return { publisher: existingPublisher, actor: user.githubLogin, mode: "session" as const };
+  }
+
+  const expected = process.env.PUBLISH_TOKEN;
+  const token = req.headers.get("x-publish-token");
+  if (!expected) throw new Error("publish_token_not_configured");
+  if (!token || token !== expected) throw new Error("unauthorized");
+
+  const publisher = await prisma.publisher.upsert({
+    where: { handle: publisherHandle },
+    update: {},
+    create: { handle: publisherHandle, displayName: publisherHandle }
+  });
+
+  return { publisher, actor: "token", mode: "token" as const };
+}
+
+export async function POST(req: Request) {
   const form = await req.formData();
   const manifestText = form.get("manifest");
   const tarball = form.get("tarball");
@@ -124,6 +176,17 @@ export async function POST(req: Request) {
   const tags = asArray(manifest.tags);
   const compatibility = asArray(manifest.compatibility);
 
+  let publisher: { id: string; handle: string; verified: boolean };
+  try {
+    const authz = await authorizePublish(req, publisherHandle);
+    publisher = authz.publisher;
+  } catch (err: any) {
+    const code = String(err?.message ?? "");
+    if (code === "publish_token_not_configured") return bad("publish token is not configured", 501);
+    if (code === "forbidden_publisher_membership") return bad("you do not have publisher access for this handle", 403);
+    return bad("unauthorized", 401);
+  }
+
   const tarBuf = Buffer.from(await tarball.arrayBuffer());
   const hash = sha256(tarBuf);
   const tmpFile = path.join(os.tmpdir(), `gitskills-publish-${Date.now()}-${Math.random().toString(16).slice(2)}.tgz`);
@@ -135,12 +198,6 @@ export async function POST(req: Request) {
   if (!evidence.hasSkillMd || !evidence.readmeMd.trim()) {
     return bad("tarball must include a non-empty SKILL.md");
   }
-
-  const publisher = await prisma.publisher.upsert({
-    where: { handle: publisherHandle },
-    update: {},
-    create: { handle: publisherHandle, displayName: publisherHandle }
-  });
 
   const existing = await prisma.skill.findUnique({
     where: { slug },

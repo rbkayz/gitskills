@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/current-user";
 
-export function requireAdmin(req: Request): { ok: true; actor: string } | { ok: false; response: NextResponse } {
+export async function requireAdmin(req: Request): Promise<{ ok: true; actor: string } | { ok: false; response: NextResponse }> {
+  const user = await getCurrentUser();
+  if (user?.role === "admin") {
+    return { ok: true, actor: user.githubLogin };
+  }
+
   const expected = process.env.ADMIN_TOKEN;
   if (!expected) {
     return { ok: false, response: NextResponse.json({ error: "admin token is not configured" }, { status: 501 }) };
@@ -12,4 +18,3 @@ export function requireAdmin(req: Request): { ok: true; actor: string } | { ok: 
   const actor = req.headers.get("x-admin-actor")?.trim() || "admin";
   return { ok: true, actor };
 }
-

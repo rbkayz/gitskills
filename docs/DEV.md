@@ -33,6 +33,7 @@ Optional for GitHub login:
 $env:AUTH_SECRET="replace-me-with-random-string"
 $env:GITHUB_CLIENT_ID="..."
 $env:GITHUB_CLIENT_SECRET="..."
+$env:ADMIN_GITHUB_LOGINS="your-github-login"
 ```
 
 Optional for embedding-backed hybrid search:
@@ -97,6 +98,21 @@ node packages/cli/dist/bin.js publish ./samples/hello-world `
   --license MIT `
   --homepage https://example.com/hello-world `
   --repo https://example.com/hello-world-repo
+```
+
+## Publish With GitHub Auth (No Publish Token)
+
+1. Sign in on `http://localhost:3001/api/auth/signin`.
+2. Publish from UI/session-backed calls using a `publisherHandle` you own.
+3. First publish for a new handle auto-creates publisher ownership for your signed-in user.
+
+For existing publishers, admins can add maintainers:
+
+```bash
+curl -X POST http://localhost:3001/api/admin/publishers/<publisher-handle>/members ^
+  -H "content-type: application/json" ^
+  -H "x-admin-token: replace-me" ^
+  -d "{\"githubLogin\":\"maintainer-login\",\"role\":\"maintainer\"}"
 ```
 
 ## Build The MCP Server

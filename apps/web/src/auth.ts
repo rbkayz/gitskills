@@ -9,6 +9,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     })
   ],
   session: { strategy: "jwt" },
+  callbacks: {
+    jwt({ token, profile }) {
+      const p = profile as { id?: string | number; login?: string } | undefined;
+      if (p?.id != null) token.githubId = String(p.id);
+      if (p?.login) token.githubLogin = String(p.login).toLowerCase();
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.githubId = typeof token.githubId === "string" ? token.githubId : undefined;
+        session.user.githubLogin = typeof token.githubLogin === "string" ? token.githubLogin : undefined;
+      }
+      return session;
+    }
+  },
   trustHost: true
 });
-

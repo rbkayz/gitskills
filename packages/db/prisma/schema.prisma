@@ -12,27 +12,55 @@ enum TrustTier {
   bronze
   silver
   gold
+
+  @@map("trust_tier")
 }
 
 enum ModerationStatus {
   active
   hidden
   blocked
+
+  @@map("moderation_status")
+}
+
+enum AppUserRole {
+  user
+  admin
+
+  @@map("app_user_role")
+}
+
+enum AppUserStatus {
+  active
+  suspended
+
+  @@map("app_user_status")
+}
+
+enum PublisherMemberRole {
+  owner
+  maintainer
+
+  @@map("publisher_member_role")
 }
 
 model Publisher {
-  id          String   @id @default(cuid())
-  handle      String   @unique
+  id          String   @id(map: "publisher_pkey") @default(dbgenerated("generate_prefixed_id('pub_')"))
+  handle      String   @unique(map: "publisher_handle_key")
   displayName String?  @map("display_name")
   verified    Boolean  @default(false)
   createdAt   DateTime @default(now()) @map("created_at")
 
   skills Skill[]
+  members PublisherMember[]
+
+  @@map("publisher")
 }
 
 model Skill {
-  id                 String           @id @default(cuid())
-  slug               String           @unique
+  id                 String           @id(map: "skill_pkey") @default(dbgenerated("generate_prefixed_id('skl_')"))
+  slug               String           @unique(map: "skill_slug_key")
   name               String
   summary            String
   readmeMd           String           @map("readme_md")
@@ -55,18 +83,21 @@ model Skill {
   updatedAt          DateTime         @updatedAt @map("updated_at")
 
   publisherId        String           @map("publisher_id")
-  publisher          Publisher        @relation(fields: [publisherId], references: [id], onDelete: Restrict)
+  publisher          Publisher        @relation(fields: [publisherId], references: [id], onDelete: Restrict, map: "skill_publisher_id_fkey")
 
   releases          Release[]
   moderationEvents  ModerationEvent[] @relation("SkillModerationEvents")
   dailyDownloads    DailySkillDownload[]
 
-  @@index([publisherId])
-  @@index([trusted, trustTier])
+  @@index([publisherId], map: "skill_publisher_id_idx")
+  @@index([trusted, trustTier], map: "skill_trusted_trust_tier_idx")
+  @@index([status, downloadTotal(sort: Desc), trustScore(sort: Desc)], map: "skill_status_download_total_trust_score_idx")
+  @@index([status, updatedAt(sort: Desc)], map: "skill_status_updated_at_idx")
+  @@map("skill")
 }
 
 model Release {
-  id               String           @id @default(cuid())
+  id               String           @id(map: "release_pkey") @default(dbgenerated("generate_prefixed_id('rel_')"))
   version          String
   tarballUrl       String           @map("tarball_url")
   sha256           String
@@ -76,31 +107,34 @@ model Release {
   createdAt        DateTime         @default(now()) @map("created_at")
 
   skillId          String           @map("skill_id")
-  skill            Skill            @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skill            Skill            @relation(fields: [skillId], references: [id], onDelete: Cascade, map: "release_skill_id_fkey")
   moderationEvents ModerationEvent[] @relation("ReleaseModerationEvents")
 
-  @@unique([skillId, version])
-  @@index([skillId])
-  @@index([status])
+  @@unique([skillId, version], map: "release_skill_id_version_key")
+  @@index([skillId], map: "release_skill_id_idx")
+  @@index([status], map: "release_status_idx")
+  @@index([skillId, status, createdAt(sort: Desc)], map: "release_skill_id_status_created_at_idx")
+  @@map("release")
 }
 
 model DailySkillDownload {
-  id        String   @id @default(cuid())
+  id        String   @id(map: "daily_skill_download_pkey") @default(dbgenerated("generate_prefixed_id('dsd_')"))
   day       DateTime
   count     Int      @default(0)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   skillId   String   @map("skill_id")
-  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade, map: "daily_skill_download_skill_id_fkey")
 
-  @@unique([skillId, day])
-  @@index([day])
-  @@index([skillId])
+  @@unique([skillId, day], map: "daily_skill_download_skill_id_day_key")
+  @@index([day], map: "daily_skill_download_day_idx")
+  @@index([skillId], map: "daily_skill_download_skill_id_idx")
+  @@map("daily_skill_download")
 }
 
 model ModerationEvent {
-  id         String           @id @default(cuid())
+  id         String           @id(map: "moderation_event_pkey") @default(dbgenerated("generate_prefixed_id('mde_')"))
   actor      String
   reason     String
   fromStatus ModerationStatus @map("from_status")
@@ -108,12 +142,50 @@ model ModerationEvent {
   createdAt  DateTime         @default(now()) @map("created_at")
 
   skillId    String?          @map("skill_id")
-  skill      Skill?           @relation("SkillModerationEvents", fields: [skillId], references: [id], onDelete: Cascade)
+  skill      Skill?           @relation("SkillModerationEvents", fields: [skillId], references: [id], onDelete: Cascade, map: "moderation_event_skill_id_fkey")
 
   releaseId  String?          @map("release_id")
-  release    Release?         @relation("ReleaseModerationEvents", fields: [releaseId], references: [id], onDelete: Cascade)
+  release    Release?         @relation("ReleaseModerationEvents", fields: [releaseId], references: [id], onDelete: Cascade, map: "moderation_event_release_id_fkey")
 
-  @@index([createdAt])
-  @@index([skillId])
-  @@index([releaseId])
+  @@index([createdAt], map: "moderation_event_created_at_idx")
+  @@index([skillId], map: "moderation_event_skill_id_idx")
+  @@index([releaseId], map: "moderation_event_release_id_idx")
+  @@index([skillId, createdAt(sort: Desc)], map: "moderation_event_skill_id_created_at_idx")
+  @@map("moderation_event")
+}
+
+model AppUser {
+  id          String          @id(map: "app_user_pkey") @default(dbgenerated("generate_prefixed_id('usr_')"))
+  githubId    String          @unique(map: "app_user_github_id_key") @map("github_id")
+  githubLogin String          @unique(map: "app_user_github_login_key") @map("github_login")
+  email       String?         @unique(map: "app_user_email_key")
+  displayName String?         @map("display_name")
+  avatarUrl   String?         @map("avatar_url")
+  role        AppUserRole     @default(user)
+  status      AppUserStatus   @default(active)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  memberships PublisherMember[]
+
+  @@index([role], map: "app_user_role_idx")
+  @@index([status], map: "app_user_status_idx")
+  @@map("app_user")
+}
+
+model PublisherMember {
+  id          String              @id(map: "publisher_member_pkey") @default(dbgenerated("generate_prefixed_id('pmb_')"))
+  publisherId String              @map("publisher_id")
+  userId      String              @map("user_id")
+  role        PublisherMemberRole @default(maintainer)
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  publisher   Publisher           @relation(fields: [publisherId], references: [id], onDelete: Cascade, map: "publisher_member_publisher_id_fkey")
+  user        AppUser             @relation(fields: [userId], references: [id], onDelete: Cascade, map: "publisher_member_user_id_fkey")
+
+  @@unique([publisherId, userId], map: "publisher_member_publisher_id_user_id_key")
+  @@index([publisherId, role], map: "publisher_member_publisher_id_role_idx")
+  @@index([userId], map: "publisher_member_user_id_idx")
+  @@map("publisher_member")
 }
