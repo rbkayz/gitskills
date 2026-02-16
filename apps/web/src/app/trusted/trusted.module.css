@@ -90,12 +90,38 @@
   line-height: 1.5;
 }
 
-.meta {
+.metrics {
+  margin-top: 4px;
+  display: grid;
+  gap: 7px;
+}
+
+.metricRow {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
   font-size: 12px;
+}
+
+.metricLabel {
+  min-width: 72px;
   color: var(--muted);
+}
+
+.metricValue {
+  color: rgba(2, 6, 23, 0.85);
+}
+
+.verifiedBadge {
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #0b3d2e;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  background: rgba(16, 185, 129, 0.13);
+  border-radius: 999px;
+  padding: 3px 6px;
 }
 
 @media (max-width: 920px) {
@@ -109,4 +135,3 @@
     grid-template-columns: 1fr;
   }
 }
-

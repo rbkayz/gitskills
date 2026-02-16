@@ -7,12 +7,21 @@ import styles from "./skill.module.css";
 
 export const dynamic = "force-dynamic";
 
+function formatCount(v: number): string {
+  return new Intl.NumberFormat("en-US").format(v);
+}
+
+function formatBuilder(publisher: { handle: string; displayName?: string | null }): string {
+  const name = publisher.displayName?.trim();
+  return name ? `${name} (@${publisher.handle})` : `@${publisher.handle}`;
+}
+
 export default async function SkillPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   const skill = await prisma.skill.findFirst({
     where: { slug, status: "active" },
     include: {
-      publisher: { select: { handle: true, displayName: true } },
+      publisher: { select: { handle: true, displayName: true, verified: true } },
       releases: { where: { status: "active" }, orderBy: { createdAt: "desc" } }
     }
   });
@@ -41,12 +50,27 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
             <div className={styles.slug}>{skill.slug}</div>
             <h1 className={styles.title}>{skill.name}</h1>
             <p className={styles.summary}>{skill.summary}</p>
-            <div className={styles.metaRow}>
-              <span>publisher {skill.publisher.handle}</span>
-              {skill.trusted ? <span className={styles.trustBadge}>{skill.trustTier ?? "community"} trusted</span> : null}
-              <span>trust {skill.trustScore}</span>
-              <span>downloads {skill.downloadTotal}</span>
-              <span>{skill.licenseSpdx ?? "license unknown"}</span>
+            <div className={styles.metrics}>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>Builder</span>
+                <span className={styles.metricValue}>{formatBuilder(skill.publisher)}</span>
+                {skill.publisher.verified ? <span className={styles.verifiedBadge}>Verified</span> : null}
+              </div>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>Trust</span>
+                <span className={styles.metricValue}>
+                  {skill.trustScore}/100
+                  {skill.trusted ? ` (${skill.trustTier ?? "trusted"})` : ""}
+                </span>
+              </div>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>Downloads</span>
+                <span className={styles.metricValue}>{formatCount(skill.downloadTotal)}</span>
+              </div>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>License</span>
+                <span className={styles.metricValue}>{skill.licenseSpdx ?? "unknown"}</span>
+              </div>
             </div>
           </div>
           <div className={styles.actions}>
@@ -55,9 +79,10 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
               <code className={styles.installCmd}>{install}</code>
             </div>
             <div className={styles.links}>
-              <Link href="/.well-known/gitskills/index.md">Agent index</Link>
+              <Link href="/docs/setup">CLI and MCP setup</Link>
+              <Link href="/.well-known/gitskills/index.md">Agent index (Markdown)</Link>
               <Link href={`/skills/${encodeURIComponent(skill.slug)}/README.md`}>README.md</Link>
-              <Link href={`/md/skills/${encodeURIComponent(skill.slug)}.md`}>Skill (MD)</Link>
+              <Link href={`/md/skills/${encodeURIComponent(skill.slug)}.md`}>Skill metadata (Markdown)</Link>
             </div>
           </div>
         </div>
@@ -79,7 +104,7 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
                     <div className={styles.version}>{r.version}</div>
                     <div className={styles.versionMeta}>
                       <span>{r.sizeBytes} bytes</span>
-                      <span>downloads {r.downloadTotal}</span>
+                      <span>downloads {formatCount(r.downloadTotal)}</span>
                     </div>
                   </div>
                   <div className={styles.versionRight}>
@@ -95,13 +120,9 @@ export default async function SkillPage(props: { params: Promise<{ slug: string 
 
         <footer className={styles.footer}>
           <Link href="/">Search</Link>
-          <span className={styles.dot} aria-hidden="true">
-            ·
-          </span>
+          <span className={styles.dot}>|</span>
           <a href="/md/search.md?q=hello">Markdown search</a>
-          <span className={styles.dot} aria-hidden="true">
-            ·
-          </span>
+          <span className={styles.dot}>|</span>
           <a href="/trusted">Trusted</a>
         </footer>
       </div>

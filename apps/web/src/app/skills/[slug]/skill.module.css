@@ -35,24 +35,38 @@
   line-height: 1.5;
 }
 
-.metaRow {
+.metrics {
   margin-top: 12px;
+  display: grid;
+  gap: 7px;
+}
+
+.metricRow {
   display: flex;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 10px;
   font-size: 12px;
+}
+
+.metricLabel {
+  min-width: 72px;
   color: var(--muted);
 }
 
-.trustBadge {
+.metricValue {
+  color: rgba(2, 6, 23, 0.85);
+}
+
+.verifiedBadge {
   font-size: 10px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: #0b3d2e;
   border: 1px solid rgba(16, 185, 129, 0.28);
   background: rgba(16, 185, 129, 0.13);
   border-radius: 999px;
-  padding: 3px 7px;
+  padding: 3px 6px;
 }
 
 .actions {

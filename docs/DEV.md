@@ -45,6 +45,7 @@ $env:OPENAI_EMBEDDING_MODEL="text-embedding-3-small"
 Useful URLs (assuming `-p 3001`):
 
 - `http://localhost:3001/`
+- `http://localhost:3001/docs/setup`
 - `http://localhost:3001/api/skills?q=hello`
 - `http://localhost:3001/md/search.md?q=hello`
 - `http://localhost:3001/md/trending.md?days=7`

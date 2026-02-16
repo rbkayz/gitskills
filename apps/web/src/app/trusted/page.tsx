@@ -8,10 +8,19 @@ function tierLabel(tier: string | null): string {
   return tier ?? "community";
 }
 
+function formatCount(v: number): string {
+  return new Intl.NumberFormat("en-US").format(v);
+}
+
+function formatBuilder(publisher: { handle: string; displayName?: string | null }): string {
+  const name = publisher.displayName?.trim();
+  return name ? `${name} (@${publisher.handle})` : `@${publisher.handle}`;
+}
+
 export default async function TrustedPage() {
   const skills = await prisma.skill.findMany({
     where: { trusted: true, status: "active" },
-    include: { publisher: { select: { handle: true } } },
+    include: { publisher: { select: { handle: true, displayName: true, verified: true } } },
     orderBy: [{ trustScore: "desc" }, { downloadTotal: "desc" }, { updatedAt: "desc" }],
     take: 200
   });
@@ -23,7 +32,8 @@ export default async function TrustedPage() {
         <p>Curated skills flagged as trusted by registry maintainers.</p>
         <div className={styles.links}>
           <Link href="/">Back to search</Link>
-          <Link href="/md/trusted.md">Trusted (Markdown)</Link>
+          <Link href="/md/trusted.md">Trusted Markdown feed</Link>
+          <Link href="/docs/setup">CLI and MCP setup</Link>
         </div>
       </section>
 
@@ -36,10 +46,20 @@ export default async function TrustedPage() {
             </div>
             <div className={styles.name}>{s.name}</div>
             <div className={styles.summary}>{s.summary}</div>
-            <div className={styles.meta}>
-              <span>trust {s.trustScore}</span>
-              <span>downloads {s.downloadTotal}</span>
-              <span>publisher {s.publisher.handle}</span>
+            <div className={styles.metrics}>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>Builder</span>
+                <span className={styles.metricValue}>{formatBuilder(s.publisher)}</span>
+                {s.publisher.verified ? <span className={styles.verifiedBadge}>Verified</span> : null}
+              </div>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>Trust</span>
+                <span className={styles.metricValue}>{s.trustScore}/100 ({tierLabel(s.trustTier)})</span>
+              </div>
+              <div className={styles.metricRow}>
+                <span className={styles.metricLabel}>Downloads</span>
+                <span className={styles.metricValue}>{formatCount(s.downloadTotal)}</span>
+              </div>
             </div>
           </Link>
         ))}

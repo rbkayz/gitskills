@@ -31,3 +31,4 @@ Open-source skills marketplace (think npm for agent skills): human-friendly web 
 
 See `docs/PLAN.md` for the end-to-end plan and milestone breakdown.
 Production setup guidance for Supabase + GCP is in `docs/SUPABASE_GCP.md`.
+Agent integration surfaces are documented in `docs/AGENT_ACCESS.md`.
