@@ -1,7 +1,7 @@
 schema_version: 1
-slug: trailofbits-security-skills
-name: Trail of Bits Security Skills (Upstream Source)
-summary: Curated upstream source entry for Trail of Bits security-focused skill workflows.
+slug: trailofbits-semgrep-rule-creator
+name: Trail of Bits Semgrep Rule Creator
+summary: Skill for authoring and validating Semgrep rules for security patterns.
 license_spdx: CC-BY-SA-4.0
 homepage_url: null
 repo_url: https://github.com/trailofbits/skills
@@ -10,18 +10,19 @@ publisher:
   display_name: Trail of Bits
   verified: true
 categories:
-  - catalog
-  - upstream
   - security
 tags:
-  - claude
-  - security
-  - audit
+  - semgrep
+  - rules
+  - static-analysis
 compatibility:
   - claude-code
+  - codex
 source:
-  kind: github_repo
-  url: https://github.com/trailofbits/skills
+  kind: github_path
+  url: https://github.com/trailofbits/skills/blob/main/plugins/semgrep-rule-creator/skills/semgrep-rule-creator/SKILL.md
+  repo_url: https://github.com/trailofbits/skills
+  path: plugins/semgrep-rule-creator/skills/semgrep-rule-creator/SKILL.md
   stars: 2678
   updated_at: 2026-02-16T08:32:41Z
   imported_at: 2026-02-16

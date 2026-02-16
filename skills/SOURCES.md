@@ -16,3 +16,42 @@ Initial upstream sources imported on **2026-02-16**:
    - https://github.com/VoltAgent/awesome-agent-skills
 
 Each source is represented as a curated `skills/registry/<slug>/` entry with provenance and computed trust metadata.
+
+## Individual Skill Imports
+
+### OpenAI (`openai/skills`)
+
+- `openai-playwright`
+- `openai-security-best-practices`
+- `openai-openai-docs`
+- `openai-vercel-deploy`
+- `openai-pdf`
+- `openai-transcribe`
+
+### Anthropics (`anthropics/claude-code`)
+
+- `anthropics-frontend-design`
+- `anthropics-mcp-integration`
+- `anthropics-skill-development`
+- `anthropics-command-development`
+
+### Trail of Bits (`trailofbits/skills`)
+
+- `trailofbits-differential-review`
+- `trailofbits-codeql`
+- `trailofbits-constant-time-analysis`
+- `trailofbits-semgrep-rule-creator`
+
+### OpenClaw / Clawhub (`openclaw/skills`)
+
+- `openclaw-skill-porter`
+- `openclaw-open-webui`
+- `openclaw-coda`
+- `openclaw-agentguard`
+
+### wshobson (`wshobson/commands`)
+
+- `wshobson-full-review`
+- `wshobson-security-hardening`
+- `wshobson-performance-optimization`
+- `wshobson-incident-response`

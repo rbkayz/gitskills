@@ -1,29 +1,30 @@
 schema_version: 1
-slug: voltagent-awesome-agent-skills
-name: VoltAgent Awesome Agent Skills (Upstream Source)
-summary: Curated upstream source entry for a broad multi-ecosystem skills catalog.
+slug: openclaw-skill-porter
+name: OpenClaw Skill Porter
+summary: Cross-platform converter between Claude skills and Gemini extensions.
 license_spdx: MIT
 homepage_url: null
-repo_url: https://github.com/VoltAgent/awesome-agent-skills
+repo_url: https://github.com/openclaw/skills
 publisher:
-  handle: voltagent
-  display_name: VoltAgent
+  handle: openclaw
+  display_name: OpenClaw
   verified: true
 categories:
-  - catalog
-  - upstream
+  - developer-tools
 tags:
-  - agent
-  - catalog
-  - multi-platform
+  - conversion
+  - claude
+  - gemini
 compatibility:
-  - codex
   - claude-code
+  - codex
 source:
-  kind: github_repo
-  url: https://github.com/VoltAgent/awesome-agent-skills
-  stars: 7150
-  updated_at: 2026-02-16T08:44:14Z
+  kind: github_path
+  url: https://github.com/openclaw/skills/blob/main/skills/0xnagato/skill-porter/SKILL.md
+  repo_url: https://github.com/openclaw/skills
+  path: skills/0xnagato/skill-porter/SKILL.md
+  stars: 1037
+  updated_at: 2026-02-16T08:36:34Z
   imported_at: 2026-02-16
 artifacts:
   skill_md: SKILL.md

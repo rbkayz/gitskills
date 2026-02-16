@@ -1,7 +1,7 @@
 schema_version: 1
-slug: trailofbits-security-skills
-name: Trail of Bits Security Skills (Upstream Source)
-summary: Curated upstream source entry for Trail of Bits security-focused skill workflows.
+slug: trailofbits-constant-time-analysis
+name: Trail of Bits Constant-Time Analysis
+summary: Skill for identifying timing side-channel vulnerabilities in crypto code.
 license_spdx: CC-BY-SA-4.0
 homepage_url: null
 repo_url: https://github.com/trailofbits/skills
@@ -10,18 +10,19 @@ publisher:
   display_name: Trail of Bits
   verified: true
 categories:
-  - catalog
-  - upstream
   - security
 tags:
-  - claude
-  - security
-  - audit
+  - crypto
+  - constant-time
+  - timing
 compatibility:
   - claude-code
+  - codex
 source:
-  kind: github_repo
-  url: https://github.com/trailofbits/skills
+  kind: github_path
+  url: https://github.com/trailofbits/skills/blob/main/plugins/constant-time-analysis/skills/constant-time-analysis/SKILL.md
+  repo_url: https://github.com/trailofbits/skills
+  path: plugins/constant-time-analysis/skills/constant-time-analysis/SKILL.md
   stars: 2678
   updated_at: 2026-02-16T08:32:41Z
   imported_at: 2026-02-16

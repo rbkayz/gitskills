@@ -1,29 +1,30 @@
 schema_version: 1
-slug: voltagent-awesome-agent-skills
-name: VoltAgent Awesome Agent Skills (Upstream Source)
-summary: Curated upstream source entry for a broad multi-ecosystem skills catalog.
+slug: wshobson-security-hardening
+name: wshobson Security Hardening Workflow
+summary: Coordinated workflow for implementing security-first architecture and hardening controls.
 license_spdx: MIT
 homepage_url: null
-repo_url: https://github.com/VoltAgent/awesome-agent-skills
+repo_url: https://github.com/wshobson/commands
 publisher:
-  handle: voltagent
-  display_name: VoltAgent
+  handle: wshobson
+  display_name: wshobson
   verified: true
 categories:
-  - catalog
-  - upstream
+  - security
 tags:
-  - agent
-  - catalog
-  - multi-platform
+  - security
+  - hardening
+  - compliance
 compatibility:
-  - codex
   - claude-code
+  - codex
 source:
-  kind: github_repo
-  url: https://github.com/VoltAgent/awesome-agent-skills
-  stars: 7150
-  updated_at: 2026-02-16T08:44:14Z
+  kind: github_path
+  url: https://github.com/wshobson/commands/blob/main/workflows/security-hardening.md
+  repo_url: https://github.com/wshobson/commands
+  path: workflows/security-hardening.md
+  stars: 1960
+  updated_at: 2026-02-16T07:47:58Z
   imported_at: 2026-02-16
 artifacts:
   skill_md: SKILL.md

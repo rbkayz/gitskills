@@ -1,29 +1,30 @@
 schema_version: 1
-slug: voltagent-awesome-agent-skills
-name: VoltAgent Awesome Agent Skills (Upstream Source)
-summary: Curated upstream source entry for a broad multi-ecosystem skills catalog.
+slug: wshobson-incident-response
+name: wshobson Incident Response Workflow
+summary: Production incident response workflow with coordinated triage, debugging, and remediation.
 license_spdx: MIT
 homepage_url: null
-repo_url: https://github.com/VoltAgent/awesome-agent-skills
+repo_url: https://github.com/wshobson/commands
 publisher:
-  handle: voltagent
-  display_name: VoltAgent
+  handle: wshobson
+  display_name: wshobson
   verified: true
 categories:
-  - catalog
-  - upstream
+  - operations
 tags:
-  - agent
-  - catalog
-  - multi-platform
+  - incident-response
+  - ops
+  - debugging
 compatibility:
-  - codex
   - claude-code
+  - codex
 source:
-  kind: github_repo
-  url: https://github.com/VoltAgent/awesome-agent-skills
-  stars: 7150
-  updated_at: 2026-02-16T08:44:14Z
+  kind: github_path
+  url: https://github.com/wshobson/commands/blob/main/workflows/incident-response.md
+  repo_url: https://github.com/wshobson/commands
+  path: workflows/incident-response.md
+  stars: 1960
+  updated_at: 2026-02-16T07:47:58Z
   imported_at: 2026-02-16
 artifacts:
   skill_md: SKILL.md

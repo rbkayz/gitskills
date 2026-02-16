@@ -1,7 +1,7 @@
 schema_version: 1
-slug: openai-skills-catalog
-name: OpenAI Skills Catalog (Upstream Source)
-summary: Curated upstream source entry for the official OpenAI Codex skills catalog.
+slug: openai-vercel-deploy
+name: OpenAI Vercel Deploy
+summary: Skill for deploying apps to Vercel with preview-first defaults.
 license_spdx: null
 homepage_url: null
 repo_url: https://github.com/openai/skills
@@ -10,17 +10,18 @@ publisher:
   display_name: OpenAI
   verified: true
 categories:
-  - catalog
-  - upstream
+  - deployment
 tags:
-  - codex
-  - openai
-  - skills
+  - vercel
+  - deploy
+  - preview
 compatibility:
   - codex
 source:
-  kind: github_repo
-  url: https://github.com/openai/skills
+  kind: github_path
+  url: https://github.com/openai/skills/blob/main/skills/.curated/vercel-deploy/SKILL.md
+  repo_url: https://github.com/openai/skills
+  path: skills/.curated/vercel-deploy/SKILL.md
   stars: 8640
   updated_at: 2026-02-16T08:41:44Z
   imported_at: 2026-02-16
