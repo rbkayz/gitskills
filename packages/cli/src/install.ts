@@ -24,6 +24,59 @@ function sha256File(p: string): Promise<string> {
   });
 }
 
+const MAX_ARCHIVE_FILES = 1000;
+const MAX_ARCHIVE_TOTAL_BYTES = 50 * 1024 * 1024; // 50 MB uncompressed
+const MAX_ARCHIVE_PATH_LENGTH = 240;
+const MAX_ARCHIVE_PATH_DEPTH = 16;
+const ALLOWED_ENTRY_TYPES = new Set([
+  "File",
+  "OldFile",
+  "Directory",
+  "OldDirectory",
+  "ContiguousFile"
+]);
+
+function validateArchivePath(p: string): void {
+  const normalized = p.replace(/\\/g, "/");
+  if (!normalized || normalized === ".") return;
+  if (normalized.startsWith("/")) throw new Error(`unsafe archive entry path: ${p}`);
+  if (normalized.includes("..")) throw new Error(`unsafe archive entry path traversal: ${p}`);
+  if (normalized.length > MAX_ARCHIVE_PATH_LENGTH) throw new Error(`archive entry path too long: ${p}`);
+  const depth = normalized.split("/").filter(Boolean).length;
+  if (depth > MAX_ARCHIVE_PATH_DEPTH) throw new Error(`archive entry path depth too large: ${p}`);
+}
+
+async function validateTarball(tarPath: string): Promise<void> {
+  let fileCount = 0;
+  let totalBytes = 0;
+  await tar.t({
+    file: tarPath,
+    onReadEntry: (entry: any) => {
+      validateArchivePath(String(entry.path ?? ""));
+      if (!ALLOWED_ENTRY_TYPES.has(String(entry.type ?? ""))) {
+        throw new Error(`unsupported archive entry type: ${entry.type} (${entry.path})`);
+      }
+
+      if (entry.type === "File" || entry.type === "OldFile" || entry.type === "ContiguousFile") {
+        fileCount += 1;
+        if (fileCount > MAX_ARCHIVE_FILES) {
+          throw new Error(`archive has too many files: ${fileCount} > ${MAX_ARCHIVE_FILES}`);
+        }
+      }
+
+      const size = Number(entry.size ?? 0);
+      if (Number.isFinite(size) && size > 0) {
+        totalBytes += size;
+        if (totalBytes > MAX_ARCHIVE_TOTAL_BYTES) {
+          throw new Error(
+            `archive uncompressed size exceeds limit: ${totalBytes} > ${MAX_ARCHIVE_TOTAL_BYTES}`
+          );
+        }
+      }
+    }
+  });
+}
+
 function pickVersion(skill: SkillDetail, version?: string): { version: string; downloadUrl: string; sha256: string } {
   if (skill.releases.length === 0) throw new Error("no releases available");
   if (!version) {
@@ -68,6 +121,9 @@ export async function installSkill(opts: {
   if (got.toLowerCase() !== v.sha256.toLowerCase()) {
     throw new Error(`sha256 mismatch: expected ${v.sha256} got ${got}`);
   }
+
+  // Validate archive shape before extraction.
+  await validateTarball(tarPath);
 
   // Defensive extraction: refuse absolute paths and ".." traversal.
   await tar.x({
